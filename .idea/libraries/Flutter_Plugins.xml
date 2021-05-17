@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Flutter Plugins" type="FlutterPluginsLibraryType">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-0.4.1" />
+      <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/camera-0.2.9+1" />
+      <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/video_player-0.7.2" />
+      <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/export_video_frame-0.0.5+4" />
+      <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers-0.8.1" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

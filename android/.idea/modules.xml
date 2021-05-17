@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-8717238/android.audioplayers.iml" filepath="$PROJECT_DIR$/.idea/modules/-8717238/android.audioplayers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1195134651/android.camera.iml" filepath="$PROJECT_DIR$/.idea/modules/1195134651/android.camera.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1597115953/android.export_video_frame.iml" filepath="$PROJECT_DIR$/.idea/modules/1597115953/android.export_video_frame.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1387216071/android.path_provider.iml" filepath="$PROJECT_DIR$/.idea/modules/-1387216071/android.path_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/2057977555/android.video_player.iml" filepath="$PROJECT_DIR$/.idea/modules/2057977555/android.video_player.iml" />
+    </modules>
+  </component>
+</project>
