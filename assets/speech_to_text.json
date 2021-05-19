@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "midyear-forest-313617",
+  "private_key_id": "6b9022657b3c7ab5e09dfe4a4b0a303f2de469ba",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDDGzyaVuITDnY9\nDiafsLWZIlNBQHxUGI/hz3AOxVtrT5UjS6GscdoPpgMo8IqUiZ7JoSh2dH2quNv6\nmncko8CoEGkKEAzwdT3J8mxj8pv1tc25xwddA809OVXGaPXGWsMSTL16h3C+FarT\nMuXg0q3Fr6XJPe7cz0m7xTy8d++sxsz8N18sgshl33CgeMpe1kZvBgh1lF3Y5OKz\nPQtlyAnQ5EvbFuplul51TKe+rTz3OYGDT9sMJ6P0lr9qioox1cHn8tMCaaiHGaSt\nGhqY5KQmMNOB0KkWVu/fiEtzgjQVYPHS3ZNCMyt/dVu/BB0tV7qwK6vlEOvs5dID\nP0+sjal9AgMBAAECggEAAIB+b55pM64mC1KQ/0VftWzxx+L+YhaaFo7UQl8Rm1be\nEsD4204dRuY6oqbtXfDb5R4Y0fOX9/hEk88RhWYCcqw871cXoW3u/CkEGStTnJZp\nWODOAD6odYLc2W2fTD5WVO+FNHgXh/WoT3JiRjZkig10oLroqJrD6f7AGqZrigc+\n8rf8m9aIMJyl9XEdNJhOyKEwEkSJbDgFrTdjMETietj+Ie4n4Nqyfwpgo/UPORHS\n551sYL5yirDbBU2NcSNb19ve3n0mjUggAz2lagJKoN/sr4NLxKOdez0oz25+nhbQ\nAQEmn/tdPHlMkVdRjmv46Wpl8t0RQ+fzeZ9691TBpQKBgQDu+RQaoEOTUT8ZbfsM\nuScSypo9M45sHk8C0pOwmbEqzmNtS57m2Jb9VxVHUhceOp1hK+GUb35JnWsHCBT2\n8GJa11awTkFGcqr4/KV15iOC7of5xj98PhUhqZn5qZnjikpyoCLr57u/IhzLdVf7\nSuW/zjFdfCiwdH+fLWXb82JwWwKBgQDRAgWeGFUHnTkihjINpwfobOQzVb/2DDTb\nQ5AkWmcelMQDHl3ib2o2Fx6n4ywqsBaMFo2QwkdwTIvRC6Xxj8xojnaWxSI/aVhb\n371xSwpCXpoH1bYZz8eLUc6pkKgqAEL/BT8DKoCBkHZCyf8xKLP6mO2bJXdfWC9C\n+DuObfl1BwKBgCSlaaHTpck3kleR+AexdP56t0BfYZ3O4Arsw903FGYeFD00dX+t\nAyqCai7vtb/a+TtngUZD+rfLPhhr8tsTbeHEV/Tda0EkYHeiNrVnv1ZawdtZvW6O\nDquE2KniikjMcjI1wGUwuifLUWMZ8Y4FpEnPkt5lJdA5bUC5s38RSa01AoGAZdvJ\nZxHOpqZNyPCDhjnH1dLzp7z7j2rFe7JCliTkqnevyyFKeeb4aSH9U66XwLoOUvlO\nxqSX8jer0BYQKlh9MttzGek61pJ9eFDi30rF1jCKepUBaTTkt5YH1IVmHwn/nI8u\n9VkKRZpkuAn/bzK5+7/51Cl/Mp0kc0vMoo4gC5MCgYAUQbcCKbzGlYqAIfPYjIEo\ni9g2WwX7bPF99ZsN07GE6HC0XLkINjgffmLdpQAHEBV/2cg8KdFpdsOMGttEDlVn\n+vMLY4fBT+iIYUEFd466IRNgtC8FTvckf/Pie7lhS3S6aMvthu8xxnRRWgEi8O6K\nIgvaQ4xOi7/2MNPnuXozmA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "blind-assist@midyear-forest-313617.iam.gserviceaccount.com",
+  "client_id": "103196808630736963320",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/blind-assist%40midyear-forest-313617.iam.gserviceaccount.com"
+}
