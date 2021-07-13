@@ -56,8 +56,7 @@ workflows:
           password: $APP_SPECIFIC_PASSWORD
         email:
             recipients:
-              - user1@example.com
-              - user2@example.com
+              - amr_magdy146@yahoo.com
             notify:
               success: true
               failure: true
