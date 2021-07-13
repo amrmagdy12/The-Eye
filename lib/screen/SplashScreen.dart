@@ -21,7 +21,7 @@ class SplashScreenState extends State<SplashScreen>
   }
 
   void navigationPage() {
-    Navigator.of(context).pushReplacementNamed(RESULT_SCREEN);
+    Navigator.of(context).pushReplacementNamed(USER_INPUT_SCREEN);
   }
 
   @override
@@ -80,7 +80,7 @@ class SplashScreenState extends State<SplashScreen>
                 ),
               ),
               new Image.asset(
-                'assets/images/eye_icon.png',
+                'assets/images/eye.png',
                 width: animation.value * 250,
                 height: animation.value * 250,
               ),

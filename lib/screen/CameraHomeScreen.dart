@@ -6,9 +6,10 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:circular_countdown/circular_countdown.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_video_recorder_app/constant/Constant.dart';
+import 'package:flutter_video_recorder_app/utility/ScreenArgument.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 import 'package:export_video_frame/export_video_frame.dart';
 
 class CameraHomeScreen extends StatefulWidget {
@@ -29,12 +30,8 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   CameraController controller;
 
-  final String _assetVideoRecorder = 'assets/images/ic_video_shutter.png';
-  final String _assetStopVideoRecorder = 'assets/images/ic_stop_video.png';
-
   int video_duration = 10; // duration for capturing video
   String videoPath;
-  VideoPlayerController videoController;
   VoidCallback videoPlayerListener;
 
   @override
@@ -144,15 +141,15 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
               _toggleCamera = !_toggleCamera;
             });
           },
-          child: Container(
+          /*child: Container(
             padding: EdgeInsets.all(4.0),
             child: Image.asset(
               'assets/images/ic_switch_camera_3.png',
               color: Colors.grey[200],
               width: 42.0,
               height: 42.0,
-            ),
-          ),
+            ),*//*
+          ),*/
         ),
       ),
     );
@@ -180,9 +177,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
 
   String timestamp() => new DateTime.now().millisecondsSinceEpoch.toString();
 
-  void setCameraResult() {
-    print("Recording Done!");
-  }
+  void setCameraResult() => print("Recording Done!");
 
   void onVideoRecordButtonPressed() async {
     // awaiting for playing start sound (bell)
@@ -199,9 +194,13 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   void onStopButtonPressed() {
     stopVideoRecording().then((_) {
       if (mounted) setState(() {});
-      showSnackBar('Video recorded to: $videoPath');
+      print('[CameraHomeScreen] Video is recorded');
       _getImagesByDuration();
-      Navigator.pop(context, videoPath);
+      // get arguments from UserInput Screen
+      var args = ModalRoute.of(context).settings.arguments as ScreenArgument;
+      // push args to Result Screen
+      Navigator.pushReplacementNamed(context, RESULT_SCREEN,arguments: args);
+
     });
   }
 
@@ -265,11 +264,12 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   }
 
   void showSnackBar(String message) {
-    print(message) ;
+    var snackbar = SnackBar(content: Text(message),);
+    ScaffoldMessenger.of(context).showSnackBar(snackbar) ;
   }
 
   void logError(String code, String message) =>
-      print('Error: $code\nMessage: $message');
+      showSnackBar('Error: $code\nMessage: $message');
 
   Future start_audio() async {
     AudioCache audioCache = AudioCache();
