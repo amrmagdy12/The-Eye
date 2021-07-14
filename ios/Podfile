@@ -69,7 +69,7 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
 
     flutter_additional_ios_build_settings(target)
-
+    config.build_settings['SWIFT_VERSION'] = '4.2'
   end
 
 end
