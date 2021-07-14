@@ -70,6 +70,7 @@ post_install do |installer|
     target.build_configurations.each do |config|
       flutter_additional_ios_build_settings(target)
       config.build_settings['SWIFT_VERSION'] = '4.2'
+    end
   end
 
 end
