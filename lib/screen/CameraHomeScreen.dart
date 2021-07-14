@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:circular_countdown/circular_countdown.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_video_recorder_app/constant/Constant.dart';
@@ -52,7 +51,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   }
 
   void _onUpdatecounts(CountdownUnit unit, int remaining) async {
-    if (remaining == 10){
+    if (remaining == 5){
       await start_audio();
       onVideoRecordButtonPressed();
     }
@@ -107,7 +106,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
                               Center(
                                   child: TimeCircularCountdown(
                                     unit: CountdownUnit.second,
-                                    countdownTotal: 10,
+                                    countdownTotal: 5,
                                     onUpdated: _onUpdatecounts,
                                     onFinished: onStopButtonPressed,
                                   )
@@ -212,7 +211,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
 
     var duration = 1;
     for(int i = 0 ; i < video_duration ; i++){
-      var image = await ExportVideoFrame.exportImageBySeconds(File(filePath),Duration(seconds:duration+i), pi/2);
+      await ExportVideoFrame.exportImageBySeconds(File(filePath),Duration(seconds:duration+i), pi/2);
     }
   }
 

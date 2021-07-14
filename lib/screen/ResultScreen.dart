@@ -4,11 +4,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_recorder_app/constant/Constant.dart';
 import 'package:logging/logging.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_video_recorder_app/utility/ScreenArgument.dart';
-import 'package:logging/logging.dart';
 
 class ResultScreen extends StatefulWidget {
   ResultScreen();
@@ -29,7 +27,7 @@ class _ResultScreenState extends State<ResultScreen> {
   var _dio = Dio();
 
   //dio response variable
-  var response;
+  Response response;
 
   //Result Screen logger
   var logger = new Logger("[ResultScreen]");
@@ -43,7 +41,7 @@ class _ResultScreenState extends State<ResultScreen> {
   _ResultScreenState();
 
   // indicate wether server responds
-  bool is_responded = true;
+  bool is_responded = false;
 
   @override
   void initState() {
@@ -121,6 +119,13 @@ class _ResultScreenState extends State<ResultScreen> {
                                         "assets/images/color_image.jpg")
                                     : Image.asset(
                                         "assets/images/ocr_image.jpg"),
+                            Padding(
+                                padding: EdgeInsets.only(top: 8.0),
+                                child: _service == CURRENCY_CHOICE
+                                    ? Text(response.data["value"])
+                                    : _service == COLOR_CHOICE
+                                        ? response.data["color"]
+                                        : response.data["extracted"])
 
                             // response text
                           ],
@@ -157,14 +162,12 @@ class _ResultScreenState extends State<ResultScreen> {
                 "http://blindassist.newtechhosting.net:5005/detect-color"
             : _dio.options.baseUrl =
                 "http://blindassist.newtechhosting.net:5005/detect-text";
-    var formData = FormData.fromMap({
-      'image1': await MultipartFile.fromFile(paths[1], filename: 'Frame1'),
-      'image2': await MultipartFile.fromFile(paths[2], filename: 'Frame2'),
-      'image3': await MultipartFile.fromFile(paths[5], filename: 'Frame3'),
-      'image4': await MultipartFile.fromFile(paths[9], filename: 'Frame9'),
+    _formData = FormData.fromMap({
+      'image1': await MultipartFile.fromFile(paths[3], filename: 'Frame1'),
+      // 'image2': await MultipartFile.fromFile(paths[2], filename: 'Frame2'),
+      // 'image3': await MultipartFile.fromFile(paths[5], filename: 'Frame3'),
+      // 'image4': await MultipartFile.fromFile(paths[9], filename: 'Frame9'),
     });
-
-    return formData;
   }
 
   void getFrames() {
@@ -184,27 +187,26 @@ class _ResultScreenState extends State<ResultScreen> {
 
   void sendRequest() async {
     _service == CURRENCY_CHOICE
-        ? await _dio
-            .post("http://blindassist.newtechhosting.net:5005/predict-currency",
-                data: _formData)
-            .then((value) => updateScreenwithResponse)
+        ? response = await _dio.post(
+            "http://blindassist.newtechhosting.net:5005/predict-currency",
+            data: _formData)
         : _service == COLOR_CHOICE
-            ? response = await _dio
-                .post("http://blindassist.newtechhosting.net:5005/detect-color",
-                    data: _formData)
-                .then((value) => updateScreenwithResponse)
-            : response = await _dio
-                .post("http://blindassist.newtechhosting.net:5005/detect-text",
-                    data: _formData)
-                .then((value) => updateScreenwithResponse);
+            ? response = await _dio.post(
+                "http://blindassist.newtechhosting.net:5005/detect-color",
+                data: _formData)
+            : response = await _dio.post(
+                "http://blindassist.newtechhosting.net:5005/detect-text",
+                data: _formData);
 
-    if (response.statusCode == 200)
-      // then a valid response
-      logger.finer("Uploaded");
-    else {
-      var snackbar =
-          SnackBar(content: Text("Error: " + response.statusMessage));
-      ScaffoldMessenger.of(context).showSnackBar(snackbar);
-    }
+    print(response.data["color"]);
+    updateScreenwithResponse();
+
+    // if (response == 200)
+    //   // then a valid response
+    //   logger.finer("Uploaded");
+    // else {
+    //   var snackbar =
+    //       SnackBar(content: Text("Error: " + response.statusMessage));
+    //   ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 }
