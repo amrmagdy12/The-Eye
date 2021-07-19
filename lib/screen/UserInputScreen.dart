@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_video_recorder_app/constant/Constant.dart';
-import 'package:flutter_video_recorder_app/utility/speechtotext.dart';
-import 'package:flutter_video_recorder_app/utility/Text_to_speech.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_video_recorder_app/utility/ScreenArgument.dart';
+import 'package:flutter_video_recorder_app/utility/Text_to_speech.dart';
+import 'package:flutter_video_recorder_app/utility/speechtotext.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 class UserInputScreen extends StatefulWidget {
   @override
@@ -23,37 +24,44 @@ class UserInputState extends State<UserInputScreen> {
   // response from speech to text
   bool recognizing = false;
   bool button_enabled = false;
+
   // Currency , Color , OCR chosen service indicator
-  var list = [false , false , false];
+  var list = [false, false, false];
 
   AudioRecognize audioRecognize = AudioRecognize(USER_INPUT_SCREEN);
 
 
-  final String voice_name = "ar-XA-Standard-D" ;
+  final String voice_name = "ar-XA-Standard-D";
 
 
   @override
-  void initState()  {
+  void initState() {
     // TODO: implement initState
     super.initState();
     // play welcome audio and then enabling button for input from user
-    WidgetsBinding.instance.scheduleFrameCallback((_) => startspeech(context));
-
     // delete video recorded
-    deleteFile() ;
+    deleteFile();
 
-    var framesDeleted = deleteDirectory("app_ExportImage");
+    var framesDeleted = deleteDirectory(
+        "/data/data/com.aeologic.fluttervideorecorderapp/app_ExportImage");
     if (framesDeleted)
-      print("Disposing ResultScreen : video recorded and the exported frames are deleted");
+      print(
+          "Disposing ResultScreen : video recorded and the exported frames are deleted");
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      init();
+    });
+
   }
 
-  bool deleteDirectory(String dirpath){
+  bool deleteDirectory(String dirpath) {
     final dir = Directory(dirpath);
-    bool exists  = dir.existsSync() ;
-    if(exists) {
+    bool exists = dir.existsSync();
+    if (exists) {
       dir.deleteSync(recursive: true);
+      return true;
     }
-    return false ;
+    return false;
   }
 
   Future<String> get _localPath async {
@@ -73,6 +81,7 @@ class UserInputState extends State<UserInputScreen> {
       final file = await _localFile;
 
       await file.delete();
+      return 1 ;
     } catch (e) {
       return 0;
     }
@@ -81,12 +90,13 @@ class UserInputState extends State<UserInputScreen> {
   @override
   Widget build(BuildContext context) {
     // Input Screen
+
     return Scaffold(
         appBar: AppBar(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(30),
-          )),
+                bottom: Radius.circular(30),
+              )),
           leading: Padding(
               padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
               child: FittedBox(
@@ -111,28 +121,40 @@ class UserInputState extends State<UserInputScreen> {
                 child: Center(
                   child: Container(
                     decoration: BoxDecoration(color: Colors.white),
-                    width: MediaQuery.of(context).size.width,
-                    height: (MediaQuery.of(context).size.height - 80) * 0.65,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width,
+                    height: (MediaQuery
+                        .of(context)
+                        .size
+                        .height - 80) * 0.65,
                     child: HomeScreen(),
                   ),
                 ),
               ),
               Expanded(
                   child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: (MediaQuery.of(context).size.height - 80) * 0.35,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
+                      height: (MediaQuery
+                          .of(context)
+                          .size
+                          .height - 80) * 0.35,
                       child: ElevatedButton(
 
                           style: ButtonStyle(
                               backgroundColor: button_enabled
                                   ? recognizing
-                                      ? MaterialStateProperty.all(Colors.green)
-                                      : MaterialStateProperty.all(Colors.blue)
+                                  ? MaterialStateProperty.all(Colors.green)
+                                  : MaterialStateProperty.all(Colors.blue)
                                   : MaterialStateProperty.all(Colors.grey)),
                           onPressed: button_enabled
                               ? recognizing
-                                  ? stop_recording
-                                  : record_audio
+                              ? stop_recording
+                              : record_audio
                               : null,
                           child: Icon(
                             recognizing ? Icons.mic_none : Icons.mic,
@@ -150,37 +172,50 @@ class UserInputState extends State<UserInputScreen> {
     setState(() {
       recognizing = true;
     });
-
   }
 
   String getChoice_audio_path(String responsetext) {
     return responsetext == 'العملة.'
         ? CURRENCY_CHOICE
         : responsetext == 'اللون.'
-            ? COLOR_CHOICE
-            : responsetext == 'مساعده.'
-                ? HELP_COMMAND
-                : responsetext == 'فحص الكلام.'? OCR_CHOICE : '';
+        ? COLOR_CHOICE
+        : responsetext == 'مساعده.'
+        ? HELP_COMMAND
+        : responsetext == 'فحص الكلام.' ? OCR_CHOICE : '';
   }
 
- void play_instructions() {
+  Future play_instructions() async {
+    setState(() {
+      button_enabled = false ;
+    });
     // play 3 services help commands
-    play_audio(CURRENCY_HELP_COMMAND);
-    Future.delayed(Duration(seconds: 4) ,(){
-       play_audio(COLOR_HELP_COMMAND) ;
+    await play_audio(CURRENCY_HELP_COMMAND);
+    Future.delayed(Duration(seconds: 4), () async {
+      await play_audio(COLOR_HELP_COMMAND);
     });
-    Future.delayed(Duration(seconds: 7) ,(){
-      play_audio(OCR_HELP_COMMAND);
+    Future.delayed(Duration(seconds: 8), () async {
+      await play_audio(OCR_HELP_COMMAND);
     });
+    Future.delayed(Duration(seconds: 12), () async {
+      await play_audio(MIC_INSTRUCTIONS);
+    });
+    Future.delayed(Duration(seconds: 18), () async {
+      await play_audio(BELL_INSTRUCTIONS).then((value) {
+        setState(() {
+          button_enabled = true ;
+        });
+      });
+    });
+
   }
 
-  void play_audio(String path) async {
+  Future play_audio(String path) async {
     AudioCache audioCache = AudioCache();
     await audioCache.play('$path');
   }
 
-  void stop_recording() {
-    audioRecognize.stopRecording();
+  void stop_recording() async {
+    await audioRecognize.stopRecording();
     setState(() {
       recognizing = false;
     });
@@ -189,31 +224,31 @@ class UserInputState extends State<UserInputScreen> {
     String text = audioRecognize.getText();
     String path = getChoice_audio_path(text);
 
-    if (path == ''){
+    if (path == '') {
       var snackbar = SnackBar(content: Text("لم أسمع"),);
-      ScaffoldMessenger.of(context).showSnackBar(snackbar) ;
-      play_audio(WAVENET) ;
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+      await play_audio(WAVENET);
       return;
     }
 
     // mark chosen service
-    path == CURRENCY_CHOICE ? list[0] = true : path == COLOR_CHOICE ? list[1] = true : path == OCR_CHOICE ? list[2] = true : null ;
+    path == CURRENCY_CHOICE ? list[0] = true : path == COLOR_CHOICE ?
+    list[1] = true : path == OCR_CHOICE ? list[2] = true : null;
 
     // help command >> play instructions else play service choice and navigate
-    path == HELP_COMMAND ? play_instructions() : play_audio(path);
+    path == HELP_COMMAND ? await play_instructions() : await play_audio(path);
 
-    if(path != HELP_COMMAND && path != '' ){
-      ScreenArgument choice = check_marked_service() ;
-      navigatetoVideoScreen(choice) ;
-    }else {
+    if (path != HELP_COMMAND && path != '') {
+      ScreenArgument choice = check_marked_service();
+      navigatetoVideoScreen(choice);
+    } else {
       // do nothing
     }
-
   }
 
   void synthesizeText(String text, String name) async {
     final String audioContent =
-        await TextToSpeechAPI().synthesizeText(text, name, "ar-XA");
+    await TextToSpeechAPI().synthesizeText(text, name, "ar-XA");
     if (audioContent == null) return;
     final bytes = Base64Decoder().convert(audioContent, 0, audioContent.length);
     final dir = await getTemporaryDirectory(); // to be modified
@@ -222,17 +257,23 @@ class UserInputState extends State<UserInputScreen> {
     await file.writeAsBytes(bytes);
 
     var snackbar = SnackBar(content: Text(file.path),);
-    ScaffoldMessenger.of(context).showSnackBar(snackbar) ;
-    play_audio(file.path) ;
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    await play_audio(file.path);
   }
+
   ScreenArgument check_marked_service() {
     // check marked service and return constant indicator related to it
     if (list[0])
-      return ScreenArgument(CURRENCY_CHOICE,"") ;
+      return ScreenArgument(CURRENCY_CHOICE, "");
     else if (list[1])
-      return ScreenArgument(COLOR_CHOICE,"") ;
+      return ScreenArgument(COLOR_CHOICE, "");
     else if (list[2])
-      return ScreenArgument(OCR_CHOICE,"") ;
+      return ScreenArgument(OCR_CHOICE, "");
+    else{
+      var snack = SnackBar(content: Text("(Screen Argument) Error service Choice")) ;
+      ScaffoldMessenger.of(context).showSnackBar(snack) ;
+      return ScreenArgument("" ,"") ;
+    }
   }
 
   // be used after receiving text transcribed from server (Speech to text)
@@ -240,23 +281,43 @@ class UserInputState extends State<UserInputScreen> {
     await Navigator.of(context).pushNamed(CAMERA_SCREEN, arguments: choice);
   }
 
-  void startspeech(BuildContext context) async {
-    // play welcome audio
-    // setState with enabling button
-    play_audio(WELCOME);
+  void init() async {
+    var args = ModalRoute.of(context).settings.arguments as ScreenArgument;
+    if (args != null)
+      // message passed from result screen
+      // then run instructions for repetition
+      await startspeech() ;
 
-    startTimer(
-        8,
-        () => setState(() {
-              button_enabled = true;
-            }));
+    else
+      await start_welcome();
   }
 
-  Future<Timer> startTimer(var duration, void Function() handle) async{
-    return Timer(Duration(seconds: duration), handle);
+  Future start_welcome() async {
+    // play welcome audio
+    // setState with enabling button
+      await play_audio(WELCOME);
+      startTimer(
+          8,
+              () =>
+              setState(() {
+                button_enabled = true;
+              }));
+  }
+
+  Future startspeech() async {
+    await play_instructions() ;
+    setState(() {
+      button_enabled = true ;
+    });
   }
 
 }
+
+
+Future<Timer> startTimer(var duration, void Function() handle) async {
+  return Timer(Duration(seconds: duration), handle);
+}
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -284,7 +345,7 @@ class HomeScreen_state extends State<HomeScreen> {
                 child: Card(
                   shape: RoundedRectangleBorder(
                       borderRadius:
-                          BorderRadius.all(Radius.elliptical(15.0, 15.0))),
+                      BorderRadius.all(Radius.elliptical(15.0, 15.0))),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
@@ -307,7 +368,7 @@ class HomeScreen_state extends State<HomeScreen> {
                                 width: 200,
                                 height: 40,
                                 child: Text(
-                                  "Detection of various Egyptian banknotes",
+                                  "تحديد مختلف العملات المصرية",
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               )),
@@ -320,7 +381,7 @@ class HomeScreen_state extends State<HomeScreen> {
               child: Card(
                 shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.all(Radius.elliptical(15.0, 15.0))),
+                    BorderRadius.all(Radius.elliptical(15.0, 15.0))),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
@@ -343,7 +404,7 @@ class HomeScreen_state extends State<HomeScreen> {
                               width: 200,
                               height: 30,
                               child: Text(
-                                "Colors detection",
+                                "تحديد اللون",
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             )),
@@ -357,7 +418,7 @@ class HomeScreen_state extends State<HomeScreen> {
               child: Card(
                 shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.all(Radius.elliptical(15.0, 15.0))),
+                    BorderRadius.all(Radius.elliptical(15.0, 15.0))),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
@@ -380,7 +441,7 @@ class HomeScreen_state extends State<HomeScreen> {
                               width: 200,
                               height: 30,
                               child: Text(
-                                "Extraction of text",
+                                "استخراج الكلام من الصور",
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             )),
@@ -394,7 +455,7 @@ class HomeScreen_state extends State<HomeScreen> {
               child: Card(
                 shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.all(Radius.elliptical(15.0, 15.0))),
+                    BorderRadius.all(Radius.elliptical(15.0, 15.0))),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     textBaseline: TextBaseline.alphabetic,
@@ -416,19 +477,23 @@ class HomeScreen_state extends State<HomeScreen> {
                           scrollDirection: Axis.vertical,
                           child: Column(children: [
                             SizedBox(
-                              height: 20,
+                              height: 30,
                               width: 220,
-                              child: Text(
-                                "* Bell rings for start of a video",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              child: Center(
+                                child: Text(
+                                  "يرن الجرس عند بدء التسجيل",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                             SizedBox(
-                              height: 40,
+                              height: 60,
                               width: 220,
-                              child: Text(
-                                "* Record Button lays on the buttom of screen",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              child: Center(
+                                child: Text(
+                                  "إضغظ في اسفل الشاشة عند بدء التسجيل",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                           ]),

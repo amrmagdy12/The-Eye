@@ -19,7 +19,7 @@ class AudioRecognize {
 
   void streamingRecognize() async {
     // initializing recorder
-    _recorder.initialize();
+    await _recorder.initialize();
 
     _audioStream = BehaviorSubject<List<int>>();
     _audioStreamSubscription = _recorder.audioStream.listen((event) {
@@ -33,7 +33,7 @@ class AudioRecognize {
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
     final config = _getConfig();
 
-    final responseStream = speechToText.streamingRecognize(
+    final responseStream =  speechToText.streamingRecognize(
         StreamingRecognitionConfig(config: config, interimResults: true),
         _audioStream);
 

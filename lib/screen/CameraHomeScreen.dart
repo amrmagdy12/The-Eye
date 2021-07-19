@@ -29,7 +29,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   CameraController controller;
 
-  int video_duration = 10; // duration for capturing video
+  int video_duration = 5; // duration for capturing video
   String videoPath;
   VoidCallback videoPlayerListener;
 
@@ -191,10 +191,10 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   }
 
   void onStopButtonPressed() {
-    stopVideoRecording().then((_) {
+    stopVideoRecording().then((_) async {
       if (mounted) setState(() {});
       print('[CameraHomeScreen] Video is recorded');
-      _getImagesByDuration();
+      await _getImagesByDuration();
       // get arguments from UserInput Screen
       var args = ModalRoute.of(context).settings.arguments as ScreenArgument;
       // push args to Result Screen

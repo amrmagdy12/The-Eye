@@ -1,5 +1,5 @@
 class ScreenArgument {
   final String title ;
-  final String message ;
+  String message = "";
   ScreenArgument(this.title,this.message) ;
 }

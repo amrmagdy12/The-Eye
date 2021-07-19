@@ -1,12 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_recorder_app/constant/Constant.dart';
+import 'package:flutter_video_recorder_app/generated/i18n.dart';
+import 'package:flutter_video_recorder_app/screen/UserInputScreen.dart';
 import 'package:logging/logging.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_video_recorder_app/utility/ScreenArgument.dart';
+import 'package:flutter_video_recorder_app/utility/Text_to_speech.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ResultScreen extends StatefulWidget {
   ResultScreen();
@@ -35,20 +42,15 @@ class _ResultScreenState extends State<ResultScreen> {
   //argument passed
   var args;
 
-  //message passed for chosen service
+  //message passed (chosen service)
   String _service;
 
   _ResultScreenState();
-
-  // indicate wether server responds
-  bool is_responded = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    getFrames();
   }
 
   @override
@@ -59,101 +61,78 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   Widget build(BuildContext context) {
     // Result Screen
+    getFrames();
 
     args = ModalRoute.of(context).settings.arguments as ScreenArgument;
 
     _service = args.title;
 
-    _formData = initRequest();
+    initialize();
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: null,
-        body: Stack(alignment: Alignment.center, children: <Widget>[
-          Container(
-            height: double.infinity,
-            width: double.infinity,
+    return Scaffold(
+      appBar: null,
+      body:
+        Padding(
+          padding: EdgeInsets.all(50.0),
+          child: Center(
             child: Container(
-              height: 150,
-              width: 150,
-              child: is_responded
-                  ? Align(
-                      alignment: Alignment.center,
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          children: <Widget>[
-                            ListTile(
-                              leading: _service == CURRENCY_CHOICE
-                                  ? FaIcon(FontAwesomeIcons.moneyBillWave)
-                                  : _service == COLOR_CHOICE
-                                      ? FaIcon(FontAwesomeIcons.palette)
-                                      : FaIcon(FontAwesomeIcons.fileCode),
-                              title: _service == CURRENCY_CHOICE
-                                  ? Text(
-                                      "Currency",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15),
-                                    )
-                                  : _service == COLOR_CHOICE
-                                      ? Text(
-                                          "Color",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15),
-                                        )
-                                      : Text(
-                                          "Text Extraction",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15),
-                                        ),
+              height: double.infinity,
+              width: double.infinity,
+                  child: FutureBuilder<int>(
+                      future: sendRequest(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done &&
+                            snapshot.hasData) {
+                          // text to speech response to the user
+                          return ResponseScreen(_service, snapshot, response);
+                        } else {
+                          if (snapshot.hasError && response != null) {
+                            print(response.statusMessage);
+                            return Container();
+                          }
+                          return Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.white70, width: 1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 60.0, left: 60.0),
+                                child: Align(
+                                    alignment: Alignment.center,
+                                    child: Column(children: [
+                                      CircularProgressIndicator(
+                                        value: null,
+                                        strokeWidth: 6.0,
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.only(top: 10),
+                                          child: Center(
+                                            child: Text(
+                                              "برجاء الانتظار",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15.0),
+                                            ),
+                                          )),
+                                    ])),
+                              ),
                             ),
-                            _service == CURRENCY_CHOICE
-                                ? Image.asset(
-                                    "assets/images/currency_image.jpg")
-                                : _service == COLOR_CHOICE
-                                    ? Image.asset(
-                                        "assets/images/color_image.jpg")
-                                    : Image.asset(
-                                        "assets/images/ocr_image.jpg"),
-                            Padding(
-                                padding: EdgeInsets.only(top: 8.0),
-                                child: _service == CURRENCY_CHOICE
-                                    ? Text(response.data["value"])
-                                    : _service == COLOR_CHOICE
-                                        ? response.data["color"]
-                                        : response.data["extracted"])
-
-                            // response text
-                          ],
-                        ),
-                      ),
-                    )
-                  : Align(
-                      alignment: Alignment.center,
-                      child: Column(
-                        children: [
-                          //   CircularProgressIndicator(
-                          //     value: null ,
-                          //     strokeWidth: 8.0,
-                          //   ),
-                          //   Text("Please wait"),
-                          ElevatedButton(
-                              onPressed: sendRequest, child: Text("press"))
-                        ],
-                      ),
-                    ),
-            ),
+                          );
+                        }
+                      })),
           ),
-        ]),
-      ),
-    );
+          ),
+      );
   }
 
-  Future<FormData> initRequest() async {
+  void initialize() async {
+    await initRequest();
+  }
+
+  Future initRequest() async {
     _service == CURRENCY_CHOICE
         ? _dio.options.baseUrl =
             "http://blindassist.newtechhosting.net:5005/predict-currency"
@@ -162,30 +141,26 @@ class _ResultScreenState extends State<ResultScreen> {
                 "http://blindassist.newtechhosting.net:5005/detect-color"
             : _dio.options.baseUrl =
                 "http://blindassist.newtechhosting.net:5005/detect-text";
-    _formData = FormData.fromMap({
-      'image1': await MultipartFile.fromFile(paths[3], filename: 'Frame1'),
-      // 'image2': await MultipartFile.fromFile(paths[2], filename: 'Frame2'),
-      // 'image3': await MultipartFile.fromFile(paths[5], filename: 'Frame3'),
-      // 'image4': await MultipartFile.fromFile(paths[9], filename: 'Frame9'),
-    });
   }
 
-  void getFrames() {
+  void getFrames() async{
     var dir = Directory(
-        "/data/data/com.aeologic.fluttervideorecorderapp/app_ExportImage");
+        "/data/data/com.aeologic.fluttervideorecorderapp/app_ExportImage/");
     var files = dir.listSync().toList();
+
     files.forEach((element) {
       paths.add(element.path);
     });
   }
 
-  void updateScreenwithResponse() {
-    setState(() {
-      is_responded = !is_responded;
+  Future<int> sendRequest() async {
+    _formData = FormData.fromMap({
+      'image1': await MultipartFile.fromFile(paths[1], filename: 'Frame2'),
+      'image2': await MultipartFile.fromFile(paths[2], filename: 'Frame3'),
+      'image3': await MultipartFile.fromFile(paths[3], filename: 'Frame4'),
+      'image4': await MultipartFile.fromFile(paths[4], filename: 'Frame5'),
     });
-  }
 
-  void sendRequest() async {
     _service == CURRENCY_CHOICE
         ? response = await _dio.post(
             "http://blindassist.newtechhosting.net:5005/predict-currency",
@@ -198,15 +173,147 @@ class _ResultScreenState extends State<ResultScreen> {
                 "http://blindassist.newtechhosting.net:5005/detect-text",
                 data: _formData);
 
-    print(response.data["color"]);
-    updateScreenwithResponse();
+    return (response.statusCode);
+  }
+}
 
-    // if (response == 200)
-    //   // then a valid response
-    //   logger.finer("Uploaded");
-    // else {
-    //   var snackbar =
-    //       SnackBar(content: Text("Error: " + response.statusMessage));
-    //   ScaffoldMessenger.of(context).showSnackBar(snackbar);
+class ResponseScreen extends StatefulWidget {
+  final String service;
+
+  var snapshot;
+  final Response response;
+
+  ResponseScreen(this.service, this.snapshot, this.response);
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return ResponseState();
+  }
+}
+
+class ResponseState extends State<ResponseScreen> {
+  final String voice_arabic = "ar-XA-Standard-D";
+  final String voice_english = "en-US-Standard-F";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      if (widget.snapshot.data == 200) {
+        await say_response().then((value) {
+          var arg = ScreenArgument("Result Screen", "passed");
+          // push args to Result Screen
+          Future.delayed(Duration(seconds: 3), () {
+            navigatetoInputScreen(arg);
+          });
+        }
+        );
+        }
+
+    });
+  }
+
+  Future play_audio(String path) async {
+    await AudioPlayer().play(path, isLocal: true);
+  }
+
+  Future navigatetoInputScreen(ScreenArgument arg) async {
+    await Navigator.of(context)
+        .pushReplacementNamed(USER_INPUT_SCREEN, arguments: arg);
+  }
+
+  Future synthesizeText(String text, String name) async {
+    final String audioContent = await TextToSpeechAPI().synthesizeText(
+        text,
+        name == "en" ? voice_english : voice_arabic,
+        name == 'en' ? "en-US" : "ar-XA");
+    if (audioContent == null) return;
+    final bytes = Base64Decoder().convert(audioContent, 0, audioContent.length);
+    final dir = await getTemporaryDirectory(); // to be modified
+
+    final file = File('${dir.path}/result_speech.mp3'); // to be modified
+    await file.writeAsBytes(bytes);
+
+    await play_audio(file.path);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    // add post method after build method
+
+    return Align(
+      alignment: Alignment.center,
+      child: Card(
+        elevation: 5,
+        clipBehavior: Clip.antiAlias,
+        child: Flexible(
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                leading: widget.service == CURRENCY_CHOICE
+                    ? FaIcon(FontAwesomeIcons.moneyBillWave)
+                    : widget.service == COLOR_CHOICE
+                        ? FaIcon(FontAwesomeIcons.palette)
+                        : FaIcon(FontAwesomeIcons.fileCode),
+                title: widget.service == CURRENCY_CHOICE
+                    ? Text(
+                        "Currency",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                      )
+                    : widget.service == COLOR_CHOICE
+                        ? Text(
+                            "Color",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                          )
+                        : Text(
+                            "Text Extraction",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+              ),
+              widget.service == CURRENCY_CHOICE
+                  ? Image.asset("assets/images/currency_image.jpg")
+                  : widget.service == COLOR_CHOICE
+                      ? Image.asset("assets/images/color_image.jpg")
+                      : Image.asset("assets/images/ocr_image.jpg"),
+              Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: SingleChildScrollView(
+                    child: widget.snapshot.data == 200
+                        ? widget.service == CURRENCY_CHOICE
+                            ? Text(widget.response.data["value"])
+                            : widget.service == COLOR_CHOICE
+                                ? Text(widget.response.data["color"],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15))
+                                : Text(widget.response.data["extracted"],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15))
+                        : Text("[API Error] " + widget.response.statusMessage,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15))),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future say_response() async {
+    widget.service == CURRENCY_CHOICE
+        ? await synthesizeText(widget.response.data["value"], voice_arabic)
+        : widget.service == COLOR_CHOICE
+            ? await synthesizeText(widget.response.data["color"], voice_arabic)
+            : await synthesizeText(widget.response.data["extracted"],
+                widget.response.data["lang"]);
   }
 }
