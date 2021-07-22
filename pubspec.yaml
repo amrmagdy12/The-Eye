@@ -9,12 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sound_stream: ^0.2.0
+  sound_stream: ^0.3.0
   rxdart: ^0.24.1
   cupertino_icons: ^0.1.2
-  camera: ^0.2.6
+  camera: ^0.8.1+5
   circular_countdown: ^1.2.1
-  path_provider: '>=0.4.1 < 1.6.11'
+  path_provider: ^1.6.8
   export_video_frame: ^0.0.5+4
   audioplayers: any
   google_speech: ^1.0.2

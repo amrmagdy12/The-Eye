@@ -28,7 +28,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   bool _startRecording = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   CameraController controller;
-
+  var snackbar = SnackBar(content: Text("[CameraHomeScreen] Error saving frames")) ;
   int video_duration = 5; // duration for capturing video
   String videoPath;
   VoidCallback videoPlayerListener;
@@ -53,9 +53,6 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   void _onUpdatecounts(CountdownUnit unit, int remaining) async {
     if (remaining == 5){
       await start_audio();
-      onVideoRecordButtonPressed();
-    }
-    else {
       onVideoRecordButtonPressed();
     }
   }
@@ -182,18 +179,22 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
     // awaiting for playing start sound (bell)
     print('onVideoRecordButtonPressed()');
       //succeed , start video recording
-    startVideoRecording().then((String filePath) {
+    startVideoRecording().then((_) {
          if (mounted) setState(() {});
-         if (filePath != null) showSnackBar('Saving video to $filePath');
        });
-
-
   }
 
-  void onStopButtonPressed() {
-    stopVideoRecording().then((_) async {
+  void onStopButtonPressed() async{
+    await stopVideoRecording().then((file) async {
+
       if (mounted) setState(() {});
-      print('[CameraHomeScreen] Video is recorded');
+
+      if(file != null) print('Video recorded to ${file.path}');
+
+      videoPath = file.path;
+//      setCameraResult();
+      await copyvideo();
+
       await _getImagesByDuration();
       // get arguments from UserInput Screen
       var args = ModalRoute.of(context).settings.arguments as ScreenArgument;
@@ -201,6 +202,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
       Navigator.pushReplacementNamed(context, RESULT_SCREEN,arguments: args);
 
     });
+
   }
 
   Future _getImagesByDuration() async {
@@ -210,51 +212,46 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
     final String filePath = '$dirPath/recorded.mp4';
 
     var duration = 1;
-    for(int i = 0 ; i < video_duration ; i++){
-      await ExportVideoFrame.exportImageBySeconds(File(filePath),Duration(seconds:duration+i), pi/2);
+    for(int i = 0 ; i < video_duration ; i++) {
+     await ExportVideoFrame.exportImageBySeconds(File(filePath),Duration(seconds:duration+i), pi/2);
     }
   }
+  Future _cleanCache() async {
+    var result = await ExportVideoFrame.cleanImageCache();
+    result ?
+      print("[CLEAN_IMAGE_CACHE]"+ "FRAMES DELETED") : ScaffoldMessenger.of(context).showSnackBar(snackbar);
+  }
 
-  Future<String> startVideoRecording() async {
+  Future<void> startVideoRecording() async {
     if (!controller.value.isInitialized) {
       showSnackBar('Error: select a camera first.');
       return null;
     }
-
-    final Directory extDir = await getApplicationDocumentsDirectory();
-    final String dirPath = '${extDir.path}/Videos';
-    await new Directory(dirPath).create(recursive: true);
-
-    final String filePath = '$dirPath/recorded.mp4';
-
 
     if (controller.value.isRecordingVideo) {
       return null;
     }
 
     try {
-      videoPath = filePath;
-      await controller.startVideoRecording(filePath);
+      await controller.startVideoRecording();
     } on CameraException catch (e) {
       _showException(e);
       return null;
     }
-    return filePath;
+
   }
 
-  Future<void> stopVideoRecording() async {
+  Future<XFile> stopVideoRecording() async {
     if (!controller.value.isRecordingVideo) {
       return null;
     }
 
     try {
-      await controller.stopVideoRecording();
+      return controller.stopVideoRecording();
     } on CameraException catch (e) {
       _showException(e);
       return null;
     }
-
-    setCameraResult();
   }
 
   void _showException(CameraException e) {
@@ -273,6 +270,16 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
   Future start_audio() async {
     AudioCache audioCache = AudioCache();
     await audioCache.play('audio/bell_audio.mp3');
+  }
+
+  Future copyvideo() async{
+    final Directory extDir = await getApplicationDocumentsDirectory();
+    final String dirPath = '${extDir.path}/Videos';
+    await new Directory(dirPath).create(recursive: true);
+
+    final String filePath = '$dirPath/recorded.mp4';
+     File file = File(videoPath);
+     await file.copy(filePath) ;
   }
 
 }

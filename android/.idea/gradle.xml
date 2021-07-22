@@ -6,20 +6,20 @@
         <option name="testRunner" value="PLATFORM" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="13.0.2" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers-0.8.1/android" />
-            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/camera-0.2.9+1/android" />
+            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers-0.16.1/android" />
+            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/camera-0.8.1+5/android" />
             <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/export_video_frame-0.0.5+4/android" />
-            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-0.4.1/android" />
-            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/video_player-0.7.2/android" />
+            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.10/android" />
+            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+2/android" />
+            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+8/android" />
+            <option value="$PROJECT_DIR$/../../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/sound_stream-0.3.0/android" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
-        <option name="useQualifiedModuleNames" value="true" />
       </GradleProjectSettings>
     </option>
   </component>

@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
-import 'package:audioplayers/audio_cache.dart';
 import 'package:logging/logging.dart';
 
 
@@ -26,6 +25,7 @@ class AudioRecognize {
       _audioStream.add(event);
     });
 
+
     await _recorder.start();
 
     final serviceAccount = ServiceAccount.fromString(
@@ -45,7 +45,7 @@ class AudioRecognize {
     });
   }
 
-  void stopRecording() async {
+  Future stopRecording() async {
     is_recognized = false ;
     await _recorder.stop();
     await _audioStreamSubscription?.cancel();

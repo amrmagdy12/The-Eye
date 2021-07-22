@@ -71,61 +71,60 @@ class _ResultScreenState extends State<ResultScreen> {
 
     return Scaffold(
       appBar: null,
-      body:
-        Padding(
-          padding: EdgeInsets.all(50.0),
-          child: Center(
-            child: Container(
+      body: Padding(
+        padding: EdgeInsets.all(50.0),
+        child: Center(
+          child: Container(
               height: double.infinity,
               width: double.infinity,
-                  child: FutureBuilder<int>(
-                      future: sendRequest(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done &&
-                            snapshot.hasData) {
-                          // text to speech response to the user
-                          return ResponseScreen(_service, snapshot, response);
-                        } else {
-                          if (snapshot.hasError && response != null) {
-                            print(response.statusMessage);
-                            return Container();
-                          }
-                          return Padding(
-                            padding: EdgeInsets.only(top: 5),
-                            child: Card(
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.white70, width: 1),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 60.0, left: 60.0),
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: Column(children: [
-                                      CircularProgressIndicator(
-                                        value: null,
-                                        strokeWidth: 6.0,
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 10),
-                                          child: Center(
-                                            child: Text(
-                                              "برجاء الانتظار",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15.0),
-                                            ),
-                                          )),
-                                    ])),
-                              ),
-                            ),
-                          );
-                        }
-                      })),
-          ),
-          ),
-      );
+              child: FutureBuilder<int>(
+                  future: sendRequest(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      // text to speech response to the user
+                      return ResponseScreen(_service, snapshot, response);
+                    } else {
+                      if (snapshot.hasError && response != null) {
+                        print(response.statusMessage);
+                        return Container();
+                      }
+                      return Padding(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Card(
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white70, width: 1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 60.0, left: 60.0),
+                            child: Align(
+                                alignment: Alignment.center,
+                                child: Column(children: [
+                                  CircularProgressIndicator(
+                                    value: null,
+                                    strokeWidth: 6.0,
+                                  ),
+                                  Padding(
+                                      padding: EdgeInsets.only(top: 10),
+                                      child: Center(
+                                        child: Text(
+                                          "برجاء الانتظار",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15.0),
+                                        ),
+                                      )),
+                                ])),
+                          ),
+                        ),
+                      );
+                    }
+                  })),
+        ),
+      ),
+    );
   }
 
   void initialize() async {
@@ -143,9 +142,9 @@ class _ResultScreenState extends State<ResultScreen> {
                 "http://blindassist.newtechhosting.net:5005/detect-text";
   }
 
-  void getFrames() async{
+  void getFrames() async {
     var dir = Directory(
-        "/data/data/com.aeologic.fluttervideorecorderapp/app_ExportImage/");
+        "/data/data/com.aeologic.fluttervideorecorderapp/app_ExportImage");
     var files = dir.listSync().toList();
 
     files.forEach((element) {
@@ -202,17 +201,21 @@ class ResponseState extends State<ResponseScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      if (widget.snapshot.data == 200) {
-        await say_response().then((value) {
-          var arg = ScreenArgument("Result Screen", "passed");
-          // push args to Result Screen
-          Future.delayed(Duration(seconds: 3), () {
-            navigatetoInputScreen(arg);
-          });
-        }
-        );
-        }
+      await say_response();
+      var arg = ScreenArgument("Result Screen", "passed");
 
+      if (widget.service != OCR_CHOICE) {
+        Future.delayed(Duration(seconds: 3), () {
+          navigatetoInputScreen(arg);
+        });
+      } else {
+        print("words number :" + widget.response.data["words"].toString());
+        double numwords = (widget.response.data["words"] * 0.5);
+
+        Future.delayed(Duration(seconds: numwords.toInt()), () {
+          navigatetoInputScreen(arg);
+        });
+      }
     });
   }
 
@@ -250,65 +253,65 @@ class ResponseState extends State<ResponseScreen> {
       child: Card(
         elevation: 5,
         clipBehavior: Clip.antiAlias,
-        child: Flexible(
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                leading: widget.service == CURRENCY_CHOICE
-                    ? FaIcon(FontAwesomeIcons.moneyBillWave)
-                    : widget.service == COLOR_CHOICE
-                        ? FaIcon(FontAwesomeIcons.palette)
-                        : FaIcon(FontAwesomeIcons.fileCode),
-                title: widget.service == CURRENCY_CHOICE
-                    ? Text(
-                        "Currency",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
-                      )
-                    : widget.service == COLOR_CHOICE
-                        ? Text(
-                            "Color",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
-                          )
-                        : Text(
-                            "Text Extraction",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
-                          ),
-              ),
-              widget.service == CURRENCY_CHOICE
-                  ? Image.asset("assets/images/currency_image.jpg")
+        child: Column(
+          children: <Widget>[
+            ListTile(
+              leading: widget.service == CURRENCY_CHOICE
+                  ? FaIcon(FontAwesomeIcons.moneyBillWave)
                   : widget.service == COLOR_CHOICE
-                      ? Image.asset("assets/images/color_image.jpg")
-                      : Image.asset("assets/images/ocr_image.jpg"),
-              Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: SingleChildScrollView(
-                    child: widget.snapshot.data == 200
-                        ? widget.service == CURRENCY_CHOICE
-                            ? Text(widget.response.data["value"])
-                            : widget.service == COLOR_CHOICE
-                                ? Text(widget.response.data["color"],
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15))
-                                : Text(widget.response.data["extracted"],
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15))
-                        : Text("[API Error] " + widget.response.statusMessage,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15))),
-              )
-            ],
-          ),
+                      ? FaIcon(FontAwesomeIcons.palette)
+                      : FaIcon(FontAwesomeIcons.fileCode),
+              title: widget.service == CURRENCY_CHOICE
+                  ? Text(
+                      "Currency",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    )
+                  : widget.service == COLOR_CHOICE
+                      ? Text(
+                          "Color",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                        )
+                      : Text(
+                          "Text Extraction",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                        ),
+            ),
+            widget.service == CURRENCY_CHOICE
+                ? Image.asset("assets/images/currency_image.jpg")
+                : widget.service == COLOR_CHOICE
+                    ? Image.asset("assets/images/color_image.jpg")
+                    : Image.asset("assets/images/ocr_image.jpg"),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: SingleChildScrollView(
+                  child: widget.snapshot.data == 200
+                      ? widget.service == CURRENCY_CHOICE
+                          ? Text(widget.response.data["value"])
+                          : widget.service == COLOR_CHOICE
+                              ? Text(widget.response.data["color"],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15))
+                              : Text(widget.response.data["extracted"],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15))
+                      : Text("[API Error] " + widget.response.statusMessage,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15))),
+            )
+          ],
         ),
       ),
     );
   }
 
   Future say_response() async {
+    if (widget.snapshot.data != 200) return;
+
     widget.service == CURRENCY_CHOICE
         ? await synthesizeText(widget.response.data["value"], voice_arabic)
         : widget.service == COLOR_CHOICE

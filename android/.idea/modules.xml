@@ -4,11 +4,13 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-8717238/android.audioplayers.iml" filepath="$PROJECT_DIR$/.idea/modules/-8717238/android.audioplayers.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1195134651/android.camera.iml" filepath="$PROJECT_DIR$/.idea/modules/1195134651/android.camera.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1015282695/android.audioplayers.iml" filepath="$PROJECT_DIR$/.idea/modules/-1015282695/android.audioplayers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-2009424963/android.camera.iml" filepath="$PROJECT_DIR$/.idea/modules/-2009424963/android.camera.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/1597115953/android.export_video_frame.iml" filepath="$PROJECT_DIR$/.idea/modules/1597115953/android.export_video_frame.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1387216071/android.path_provider.iml" filepath="$PROJECT_DIR$/.idea/modules/-1387216071/android.path_provider.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/2057977555/android.video_player.iml" filepath="$PROJECT_DIR$/.idea/modules/2057977555/android.video_player.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1729232076/android.path_provider.iml" filepath="$PROJECT_DIR$/.idea/modules/-1729232076/android.path_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1587390865/android.path_provider_linux.iml" filepath="$PROJECT_DIR$/.idea/modules/1587390865/android.path_provider_linux.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1633798233/android.path_provider_macos.iml" filepath="$PROJECT_DIR$/.idea/modules/1633798233/android.path_provider_macos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1062271000/android.sound_stream.iml" filepath="$PROJECT_DIR$/.idea/modules/1062271000/android.sound_stream.iml" />
     </modules>
   </component>
 </project>

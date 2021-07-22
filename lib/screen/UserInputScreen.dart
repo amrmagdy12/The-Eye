@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -29,8 +29,6 @@ class UserInputState extends State<UserInputScreen> {
   var list = [false, false, false];
 
   AudioRecognize audioRecognize = AudioRecognize(USER_INPUT_SCREEN);
-
-
   final String voice_name = "ar-XA-Standard-D";
 
 
@@ -40,6 +38,7 @@ class UserInputState extends State<UserInputScreen> {
     super.initState();
     // play welcome audio and then enabling button for input from user
     // delete video recorded
+
     deleteFile();
 
     var framesDeleted = deleteDirectory(
@@ -51,7 +50,6 @@ class UserInputState extends State<UserInputScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       init();
     });
-
   }
 
   bool deleteDirectory(String dirpath) {
@@ -72,7 +70,7 @@ class UserInputState extends State<UserInputScreen> {
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    print('path ${path}');
+    print('path $path');
     return File('$path/Videos/recorded.mp4');
   }
 
@@ -81,7 +79,7 @@ class UserInputState extends State<UserInputScreen> {
       final file = await _localFile;
 
       await file.delete();
-      return 1 ;
+      return 1;
     } catch (e) {
       return 0;
     }
@@ -175,7 +173,7 @@ class UserInputState extends State<UserInputScreen> {
   }
 
   String getChoice_audio_path(String responsetext) {
-    return responsetext == 'العملة.'
+    return responsetext == 'العمله.'
         ? CURRENCY_CHOICE
         : responsetext == 'اللون.'
         ? COLOR_CHOICE
@@ -186,25 +184,21 @@ class UserInputState extends State<UserInputScreen> {
 
   Future play_instructions() async {
     setState(() {
-      button_enabled = false ;
+      button_enabled = false;
     });
-    // play 3 services help commands
-    await play_audio(CURRENCY_HELP_COMMAND);
-    Future.delayed(Duration(seconds: 4), () async {
-      await play_audio(COLOR_HELP_COMMAND);
+    play_audio(CURRENCY_HELP_COMMAND);
+    Future.delayed(Duration(seconds: 4), ()  {
+       play_audio(COLOR_HELP_COMMAND);
     });
-    Future.delayed(Duration(seconds: 8), () async {
-      await play_audio(OCR_HELP_COMMAND);
+    Future.delayed(Duration(seconds: 8), ()  {
+       play_audio(OCR_HELP_COMMAND);
     });
-    Future.delayed(Duration(seconds: 12), () async {
-      await play_audio(MIC_INSTRUCTIONS);
+    Future.delayed(Duration(seconds: 12), () {
+       play_audio(BELL_INSTRUCTIONS) ;
     });
-    Future.delayed(Duration(seconds: 18), () async {
-      await play_audio(BELL_INSTRUCTIONS).then((value) {
-        setState(() {
-          button_enabled = true ;
-        });
-      });
+
+    setState(() {
+      button_enabled = true ;
     });
 
   }
@@ -269,10 +263,11 @@ class UserInputState extends State<UserInputScreen> {
       return ScreenArgument(COLOR_CHOICE, "");
     else if (list[2])
       return ScreenArgument(OCR_CHOICE, "");
-    else{
-      var snack = SnackBar(content: Text("(Screen Argument) Error service Choice")) ;
-      ScaffoldMessenger.of(context).showSnackBar(snack) ;
-      return ScreenArgument("" ,"") ;
+    else {
+      var snack = SnackBar(
+          content: Text("(Screen Argument) Error service Choice"));
+      ScaffoldMessenger.of(context).showSnackBar(snack);
+      return ScreenArgument("", "");
     }
   }
 
@@ -282,12 +277,14 @@ class UserInputState extends State<UserInputScreen> {
   }
 
   void init() async {
-    var args = ModalRoute.of(context).settings.arguments as ScreenArgument;
+    var args = ModalRoute
+        .of(context)
+        .settings
+        .arguments as ScreenArgument;
     if (args != null)
       // message passed from result screen
       // then run instructions for repetition
-      await startspeech() ;
-
+      await startspeech();
     else
       await start_welcome();
   }
@@ -295,19 +292,24 @@ class UserInputState extends State<UserInputScreen> {
   Future start_welcome() async {
     // play welcome audio
     // setState with enabling button
-      await play_audio(WELCOME);
-      startTimer(
-          8,
-              () =>
-              setState(() {
-                button_enabled = true;
-              }));
+    await play_audio(WELCOME);
+
+    Future.delayed(Duration(seconds: 7), () {
+      play_audio(MIC_INSTRUCTIONS);
+    });
+
+    startTimer(
+        13,
+            () =>
+            setState(() {
+              button_enabled = true;
+            }));
   }
 
   Future startspeech() async {
-    await play_instructions() ;
+    await play_instructions();
     setState(() {
-      button_enabled = true ;
+      button_enabled = true;
     });
   }
 
@@ -370,6 +372,8 @@ class HomeScreen_state extends State<HomeScreen> {
                                 child: Text(
                                   "تحديد مختلف العملات المصرية",
                                   style: TextStyle(fontWeight: FontWeight.bold),
+                                  textDirection: TextDirection.ltr,
+
                                 ),
                               )),
                         ),
@@ -406,6 +410,8 @@ class HomeScreen_state extends State<HomeScreen> {
                               child: Text(
                                 "تحديد اللون",
                                 style: TextStyle(fontWeight: FontWeight.bold),
+                                textDirection: TextDirection.ltr,
+
                               ),
                             )),
                       ),
@@ -443,6 +449,8 @@ class HomeScreen_state extends State<HomeScreen> {
                               child: Text(
                                 "استخراج الكلام من الصور",
                                 style: TextStyle(fontWeight: FontWeight.bold),
+                                textDirection: TextDirection.ltr,
+
                               ),
                             )),
                       ),
@@ -483,6 +491,7 @@ class HomeScreen_state extends State<HomeScreen> {
                                 child: Text(
                                   "يرن الجرس عند بدء التسجيل",
                                   style: TextStyle(fontWeight: FontWeight.bold),
+                                  textDirection: TextDirection.ltr,
                                 ),
                               ),
                             ),
@@ -493,6 +502,7 @@ class HomeScreen_state extends State<HomeScreen> {
                                 child: Text(
                                   "إضغظ في اسفل الشاشة عند بدء التسجيل",
                                   style: TextStyle(fontWeight: FontWeight.bold),
+                                  textDirection: TextDirection.ltr,
                                 ),
                               ),
                             ),
