@@ -2,18 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_recorder_app/constant/Constant.dart';
-import 'package:flutter_video_recorder_app/generated/i18n.dart';
-import 'package:flutter_video_recorder_app/screen/UserInputScreen.dart';
 import 'package:logging/logging.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_video_recorder_app/utility/ScreenArgument.dart';
 import 'package:flutter_video_recorder_app/utility/Text_to_speech.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class ResultScreen extends StatefulWidget {
   ResultScreen();
@@ -38,9 +37,12 @@ class _ResultScreenState extends State<ResultScreen> {
 
   //Result Screen logger
   var logger = new Logger("[ResultScreen]");
+  ProgressDialog pr;
 
   //argument passed
   var args;
+
+  bool visited = false;
 
   //message passed (chosen service)
   String _service;
@@ -70,61 +72,52 @@ class _ResultScreenState extends State<ResultScreen> {
     initialize();
 
     return Scaffold(
-      appBar: null,
-      body: Padding(
-        padding: EdgeInsets.all(50.0),
-        child: Center(
-          child: Container(
-              height: double.infinity,
-              width: double.infinity,
-              child: FutureBuilder<int>(
-                  future: sendRequest(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.hasData) {
-                      // text to speech response to the user
-                      return ResponseScreen(_service, snapshot, response);
-                    } else {
-                      if (snapshot.hasError && response != null) {
-                        print(response.statusMessage);
-                        return Container();
-                      }
-                      return Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Card(
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.white70, width: 1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+        appBar: null,
+        body: Padding(
+          padding: EdgeInsets.all(50.0),
+          child: Center(
+              child: Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: FutureBuilder<int>(
+                    future: sendRequest(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          response != null) {
+                        return ResponseScreen(_service, snapshot, response);
+                      } else {
+                        if (snapshot.hasError && response != null) {
+                          print("[FUTUREBUILDER] SNAPSHOT ERROR");
+                          return Container();
+                        } else if (snapshot.connectionState ==
+                                ConnectionState.done &&
+                            snapshot.data == 500) {
+                          return Container();
+                        }
+                        return Container(
+                          height: double.infinity,
+                          width: double.infinity,
                           child: Padding(
-                            padding: EdgeInsets.only(top: 60.0, left: 60.0),
-                            child: Align(
-                                alignment: Alignment.center,
-                                child: Column(children: [
-                                  CircularProgressIndicator(
-                                    value: null,
-                                    strokeWidth: 6.0,
-                                  ),
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Center(
-                                        child: Text(
-                                          "برجاء الانتظار",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15.0),
-                                        ),
-                                      )),
-                                ])),
+                            padding: EdgeInsets.only(top: 250, left: 75),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              verticalDirection: VerticalDirection.down,
+                              children: [
+                                CircularProgressIndicator(),
+                                Text(
+                                  "برجاء الإنتظار",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                  })),
-        ),
-      ),
-    );
+                        );
+                      }
+                    },
+                  ))),
+        ));
   }
 
   void initialize() async {
@@ -177,12 +170,12 @@ class _ResultScreenState extends State<ResultScreen> {
 }
 
 class ResponseScreen extends StatefulWidget {
-  final String service;
+  String _service;
 
-  var snapshot;
-  final Response response;
+  AsyncSnapshot _snapshot;
+  Response _response;
 
-  ResponseScreen(this.service, this.snapshot, this.response);
+  ResponseScreen(this._service, this._snapshot, this._response);
 
   @override
   State<StatefulWidget> createState() {
@@ -204,13 +197,13 @@ class ResponseState extends State<ResponseScreen> {
       await say_response();
       var arg = ScreenArgument("Result Screen", "passed");
 
-      if (widget.service != OCR_CHOICE) {
+      if (widget._service != OCR_CHOICE) {
         Future.delayed(Duration(seconds: 3), () {
           navigatetoInputScreen(arg);
         });
       } else {
-        print("words number :" + widget.response.data["words"].toString());
-        double numwords = (widget.response.data["words"] * 0.5);
+        print("words number :" + widget._response.data["words"].toString());
+        double numwords = (widget._response.data["words"] * 0.8);
 
         Future.delayed(Duration(seconds: numwords.toInt()), () {
           navigatetoInputScreen(arg);
@@ -253,70 +246,70 @@ class ResponseState extends State<ResponseScreen> {
       child: Card(
         elevation: 5,
         clipBehavior: Clip.antiAlias,
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              leading: widget.service == CURRENCY_CHOICE
-                  ? FaIcon(FontAwesomeIcons.moneyBillWave)
-                  : widget.service == COLOR_CHOICE
-                      ? FaIcon(FontAwesomeIcons.palette)
-                      : FaIcon(FontAwesomeIcons.fileCode),
-              title: widget.service == CURRENCY_CHOICE
-                  ? Text(
-                      "Currency",
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              ListTile(
+                leading: widget._service == CURRENCY_CHOICE
+                    ? FaIcon(FontAwesomeIcons.moneyBillWave)
+                    : widget._service == COLOR_CHOICE
+                        ? FaIcon(FontAwesomeIcons.palette)
+                        : FaIcon(FontAwesomeIcons.fileCode),
+                title: widget._service == CURRENCY_CHOICE
+                    ? Text(
+                        "Currency",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                      )
+                    : widget._service == COLOR_CHOICE
+                        ? Text(
+                            "Color",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                          )
+                        : Text(
+                            "Text Extraction",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+              ),
+              widget._service == CURRENCY_CHOICE
+                  ? Image.asset("assets/images/currency_image.jpg")
+                  : widget._service == COLOR_CHOICE
+                      ? Image.asset("assets/images/color_image.jpg")
+                      : Image.asset("assets/images/ocr_image.jpg"),
+              widget._snapshot.data == 200
+                  ? widget._service == CURRENCY_CHOICE
+                      ? Text(widget._response.data["value"])
+                      : widget._service == COLOR_CHOICE
+                          ? Text(widget._response.data["color"],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15))
+                          : Text(widget._response.data["extracted"],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15))
+                  : Text("[API Error] " + widget._response.statusMessage,
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                    )
-                  : widget.service == COLOR_CHOICE
-                      ? Text(
-                          "Color",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15),
-                        )
-                      : Text(
-                          "Text Extraction",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15),
-                        ),
-            ),
-            widget.service == CURRENCY_CHOICE
-                ? Image.asset("assets/images/currency_image.jpg")
-                : widget.service == COLOR_CHOICE
-                    ? Image.asset("assets/images/color_image.jpg")
-                    : Image.asset("assets/images/ocr_image.jpg"),
-            Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: SingleChildScrollView(
-                  child: widget.snapshot.data == 200
-                      ? widget.service == CURRENCY_CHOICE
-                          ? Text(widget.response.data["value"])
-                          : widget.service == COLOR_CHOICE
-                              ? Text(widget.response.data["color"],
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15))
-                              : Text(widget.response.data["extracted"],
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15))
-                      : Text("[API Error] " + widget.response.statusMessage,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15))),
-            )
-          ],
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15))
+            ],
+          ),
         ),
       ),
     );
   }
 
   Future say_response() async {
-    if (widget.snapshot.data != 200) return;
+    if (widget._snapshot.data != 200) return;
 
-    widget.service == CURRENCY_CHOICE
-        ? await synthesizeText(widget.response.data["value"], voice_arabic)
-        : widget.service == COLOR_CHOICE
-            ? await synthesizeText(widget.response.data["color"], voice_arabic)
-            : await synthesizeText(widget.response.data["extracted"],
-                widget.response.data["lang"]);
+    widget._response.data["extracted"] == ""
+        ? null
+        : widget._service == CURRENCY_CHOICE
+            ? await synthesizeText(widget._response.data["value"], voice_arabic)
+            : widget._service == COLOR_CHOICE
+                ? await synthesizeText(
+                    widget._response.data["color"], voice_arabic)
+                : await synthesizeText(widget._response.data["extracted"],
+                    widget._response.data["lang"]);
   }
 }

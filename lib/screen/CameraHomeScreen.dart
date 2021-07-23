@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:circular_countdown/circular_countdown.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_video_recorder_app/constant/Constant.dart';
@@ -216,11 +216,11 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
      await ExportVideoFrame.exportImageBySeconds(File(filePath),Duration(seconds:duration+i), pi/2);
     }
   }
-  Future _cleanCache() async {
-    var result = await ExportVideoFrame.cleanImageCache();
-    result ?
-      print("[CLEAN_IMAGE_CACHE]"+ "FRAMES DELETED") : ScaffoldMessenger.of(context).showSnackBar(snackbar);
-  }
+  // Future _cleanCache() async {
+  //   var result = await ExportVideoFrame.cleanImageCache();
+  //   result ?
+  //     print("[CLEAN_IMAGE_CACHE]"+ "FRAMES DELETED") : ScaffoldMessenger.of(context).showSnackBar(snackbar);
+  // }
 
   Future<void> startVideoRecording() async {
     if (!controller.value.isInitialized) {

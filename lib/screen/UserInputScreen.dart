@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +37,8 @@ class UserInputState extends State<UserInputScreen> {
     super.initState();
     // play welcome audio and then enabling button for input from user
     // delete video recorded
+
+    clear_cache() ;
 
     deleteFile();
 
@@ -311,6 +312,20 @@ class UserInputState extends State<UserInputScreen> {
     setState(() {
       button_enabled = true;
     });
+  }
+
+  Future<void> _deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+
+    if (cacheDir. existsSync()) {
+      cacheDir. deleteSync(recursive: true);
+      print("[UserInputScreen] Application cache deleted") ;
+    }
+
+  }
+
+  void clear_cache() async{
+    await _deleteCacheDir() ;
   }
 
 }
