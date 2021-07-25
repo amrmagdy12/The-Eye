@@ -13,7 +13,6 @@ dependencies:
   rxdart: ^0.24.1
   cupertino_icons: ^0.1.2
   camera: ^0.8.1+5
-  progress_dialog: ^1.2.4
   circular_countdown: ^2.1.0
   path_provider: ^2.0.2
   export_video_frame: ^0.0.5+4

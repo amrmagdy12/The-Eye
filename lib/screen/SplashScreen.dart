@@ -74,7 +74,7 @@ class SplashScreenState extends State<SplashScreen>
               Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: Text(
-                  'Comfort Eye' ,
+                  'The Eye' ,
                   style: TextStyle(fontWeight: FontWeight.bold ,fontSize: 40),
                   textAlign:TextAlign.center,
                 ),

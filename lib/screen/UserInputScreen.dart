@@ -38,7 +38,7 @@ class UserInputState extends State<UserInputScreen> {
     // play welcome audio and then enabling button for input from user
     // delete video recorded
 
-    clear_cache() ;
+    clear_cache();
 
     deleteFile();
 
@@ -184,24 +184,16 @@ class UserInputState extends State<UserInputScreen> {
   }
 
   Future play_instructions() async {
-    setState(() {
-      button_enabled = false;
-    });
     play_audio(CURRENCY_HELP_COMMAND);
-    Future.delayed(Duration(seconds: 4), ()  {
-       play_audio(COLOR_HELP_COMMAND);
+    Future.delayed(Duration(seconds: 4), () {
+      play_audio(COLOR_HELP_COMMAND);
     });
-    Future.delayed(Duration(seconds: 8), ()  {
-       play_audio(OCR_HELP_COMMAND);
+    Future.delayed(Duration(seconds: 8), () {
+      play_audio(OCR_HELP_COMMAND);
     });
     Future.delayed(Duration(seconds: 12), () {
-       play_audio(BELL_INSTRUCTIONS) ;
+      play_audio(BELL_INSTRUCTIONS);
     });
-
-    setState(() {
-      button_enabled = true ;
-    });
-
   }
 
   Future play_audio(String path) async {
@@ -231,7 +223,23 @@ class UserInputState extends State<UserInputScreen> {
     list[1] = true : path == OCR_CHOICE ? list[2] = true : null;
 
     // help command >> play instructions else play service choice and navigate
-    path == HELP_COMMAND ? await play_instructions() : await play_audio(path);
+    if (path == HELP_COMMAND) {
+      await startTimer(0, () {
+        setState(() {
+          button_enabled = false;
+        });
+      });
+
+      await play_instructions();
+
+      await startTimer(16, () {
+        setState(() {
+          button_enabled = true;
+        });
+      });
+    }
+    else
+      await play_audio(path);
 
     if (path != HELP_COMMAND && path != '') {
       ScreenArgument choice = check_marked_service();
@@ -308,24 +316,31 @@ class UserInputState extends State<UserInputScreen> {
   }
 
   Future startspeech() async {
+    startTimer(0, () {
+      setState(() {
+        button_enabled = false;
+      });
+    });
     await play_instructions();
-    setState(() {
-      button_enabled = true;
+
+    startTimer(12, () {
+      setState(() {
+        button_enabled = true;
+      });
     });
   }
 
   Future<void> _deleteCacheDir() async {
     final cacheDir = await getTemporaryDirectory();
 
-    if (cacheDir. existsSync()) {
-      cacheDir. deleteSync(recursive: true);
-      print("[UserInputScreen] Application cache deleted") ;
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+      print("[UserInputScreen] Application cache deleted");
     }
-
   }
 
-  void clear_cache() async{
-    await _deleteCacheDir() ;
+  void clear_cache() async {
+    await _deleteCacheDir();
   }
 
 }

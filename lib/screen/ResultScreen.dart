@@ -12,7 +12,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_video_recorder_app/utility/ScreenArgument.dart';
 import 'package:flutter_video_recorder_app/utility/Text_to_speech.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 class ResultScreen extends StatefulWidget {
   ResultScreen();
@@ -37,7 +36,6 @@ class _ResultScreenState extends State<ResultScreen> {
 
   //Result Screen logger
   var logger = new Logger("[ResultScreen]");
-  ProgressDialog pr;
 
   //argument passed
   var args;
@@ -98,22 +96,26 @@ class _ResultScreenState extends State<ResultScreen> {
                           height: double.infinity,
                           width: double.infinity,
                           child: Padding(
-                            padding: EdgeInsets.only(top: 250, left: 75),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              verticalDirection: VerticalDirection.down,
-                              children: [
-                                CircularProgressIndicator(),
-                                Text(
-                                  "برجاء الإنتظار",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                )
-                              ],
+                              padding: EdgeInsets.only(top: 250, left: 30),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                verticalDirection: VerticalDirection.down,
+                                children: [
+                                  CircularProgressIndicator(),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "برجاء الإنتظار",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: Colors.black),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        );
+                          );
                       }
                     },
                   ))),
@@ -281,7 +283,7 @@ class ResponseState extends State<ResponseScreen> {
                       : Image.asset("assets/images/ocr_image.jpg"),
               widget._snapshot.data == 200
                   ? widget._service == CURRENCY_CHOICE
-                      ? Text(widget._response.data["value"])
+                      ? Text(widget._response.data["value"], style: TextStyle(fontWeight: FontWeight.bold , fontSize: 15),)
                       : widget._service == COLOR_CHOICE
                           ? Text(widget._response.data["color"],
                               style: TextStyle(

@@ -310,13 +310,6 @@
             </list>
           </value>
         </entry>
-        <entry key="progress_dialog">
-          <value>
-            <list>
-              <option value="$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/progress_dialog-1.2.4/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="protobuf">
           <value>
             <list>
@@ -480,7 +473,6 @@
       <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/platform-3.0.0/lib" />
       <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-1.0.3/lib" />
       <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/process-4.2.1/lib" />
-      <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/progress_dialog-1.2.4/lib" />
       <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/protobuf-2.0.0/lib" />
       <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/quiver-3.0.1/lib" />
       <root url="file://$PROJECT_DIR$/../../Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/rxdart-0.24.1/lib" />

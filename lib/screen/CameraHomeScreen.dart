@@ -103,7 +103,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
                               Center(
                                   child: TimeCircularCountdown(
                                     unit: CountdownUnit.second,
-                                    countdownTotal: 5,
+                                    countdownTotal: video_duration,
                                     onUpdated: _onUpdatecounts,
                                     onFinished: onStopButtonPressed,
                                   )
@@ -177,7 +177,7 @@ class _CameraHomeScreenState extends State<CameraHomeScreen> {
 
   void onVideoRecordButtonPressed() async {
     // awaiting for playing start sound (bell)
-    print('onVideoRecordButtonPressed()');
+     print('onVideoRecordButtonPressed()');
       //succeed , start video recording
     startVideoRecording().then((_) {
          if (mounted) setState(() {});
