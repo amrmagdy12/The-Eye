@@ -1,22 +1,13 @@
 # Flutter Video Recorder Demo
 
-A Flutter app to showcase Video Recorder demo.
-
-# Demo
-<img height="480px" src="https://github.com/flutter-devs/flutter_video_recorder/blob/master/screens/demo.gif">
-
-
-
-# Android Screen
-<img height="480px" src="https://github.com/flutter-devs/flutter_video_recorder/blob/master/screens/android1.jpg"> <img height="480px" src="https://github.com/flutter-devs/flutter_video_recorder/blob/master/screens/android2.jpg">  <img height="480px" src="https://github.com/flutter-devs/flutter_video_recorder/blob/master/screens/android3.jpg"> 
-
-
-# iOS Screen
-<img height="480px" src="https://github.com/flutter-devs/flutter_video_recorder/blob/master/screens/iphone1.jpg"> <img height="480px" src="https://github.com/flutter-devs/flutter_video_recorder/blob/master/screens/iphone2.jpg"> <img height="480px" src="https://github.com/flutter-devs/flutter_video_recorder/blob/master/screens/iphone3.jpg"> 
-
+•	A Cross Platform Application Implemented using Flutter Which made specifically for The Visually Impaired focusing in facilitating some of their Daily life activities.
+•	Provides three main services: Color, Currency Detection, Text Extraction (OCR)
+•	CNN used for Classification on Arabic Currencies with our own Dataset with Accuracy: 87%
+•	Speech – to – Text and Text – to – Speech used for user communication 
+•	Frames Extraction Algorithm used in to filter and get the best frames for efficient results.
 
 
 ## Getting Started
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+to know more about our project , here our documentation
+[documentation](https://docs.google.com/presentation/d/1vHHUikORhciYNLmfBCkYljdHpqXBvcWf9F_wzbqYXxI/edit?usp=sharing).
