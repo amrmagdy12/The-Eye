@@ -1,4 +1,4 @@
-# Flutter Video Recorder Demo
+# The Eye
 
 •	A Cross Platform Application Implemented using Flutter Which made specifically for The Visually Impaired focusing in facilitating some of their Daily life activities.
 
